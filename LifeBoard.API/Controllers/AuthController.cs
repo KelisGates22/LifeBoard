@@ -93,7 +93,7 @@ namespace LifeBoard.API.Controllers
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -110,7 +110,7 @@ namespace LifeBoard.API.Controllers
 
         #endregion
 
-        
+
     }
 
 
