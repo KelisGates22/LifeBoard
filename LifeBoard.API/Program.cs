@@ -67,7 +67,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") 
+        policy.WithOrigins(
+            "http://localhost:5173", 
+            "https://frontend-production-721a.up.railway.app"
+            ) 
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -85,6 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowFrontend");
 app.MapControllers();
+
 
 using (var scope = app.Services.CreateScope())
 {
