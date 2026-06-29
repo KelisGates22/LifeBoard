@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AddJobPage from './pages/AddJobPage';
+import EditJobPage from './pages/EditJobPage';
 
 const isAuthenticated = () => {
   return localStorage.getItem('token') !== null;
@@ -35,6 +36,14 @@ function App() {
           element={
             <ProtectedRoute>
               <AddJobPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-job/:id"
+          element={
+            <ProtectedRoute>
+              <EditJobPage />
             </ProtectedRoute>
           }
         />
