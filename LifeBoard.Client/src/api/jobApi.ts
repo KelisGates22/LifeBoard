@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { JobApplication, LoginRequest, RegisterRequest, AuthResponse } from '../types';
 
-const BASE_URL = 'http://localhost:5237/api';
+const BASE_URL = 'https://backend-production-5926.up.railway.app/api';
 
 
 const api = axios.create({
