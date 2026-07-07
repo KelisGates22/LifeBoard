@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getJobs, deleteJob } from '../api/jobApi';
+import { getJobs, deleteJob, generateCoverLetter} from '../api/jobApi';
 import type { JobApplication } from '../types';
 
 function DashboardPage() {
@@ -8,6 +8,8 @@ function DashboardPage() {
   const [jobs, setJobs] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [coverLetter, setCoverLetter] = useState('');
+  const [generatingId, setGeneratingId] = useState<number | null>(null);
 
   const fetchJobs = async () => {
     try {
@@ -39,6 +41,18 @@ function DashboardPage() {
     localStorage.removeItem('token');
     navigate('/login');
   };
+
+ const handleGenerateCoverLetter = async (jobId: number) => {
+  setGeneratingId(jobId);
+  try {
+    const response = await generateCoverLetter(jobId);
+    setCoverLetter(response.data.coverLetter);
+  } catch {
+    setError('Failed to generate cover letter.');
+  } finally {
+    setGeneratingId(null);
+  }
+};
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -125,6 +139,13 @@ function DashboardPage() {
                   Edit
                 </button>
                 <button
+                  style={styles.generateButton}
+                  onClick={() => handleGenerateCoverLetter(job.id)}
+                  disabled={generatingId === job.id}
+                >
+                  {generatingId === job.id ? 'Generating...' : '✨ Cover Letter'}
+                </button>
+                <button
                   style={styles.deleteButton}
                   onClick={() => handleDelete(job.id)}
                 >
@@ -135,8 +156,35 @@ function DashboardPage() {
           ))}
         </div>
       )}
+      {coverLetter && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <div style={styles.modalHeader}>
+              <h2 style={styles.modalTitle}>Generated Cover Letter</h2>
+              <button
+                style={styles.closeButton}
+                onClick={() => setCoverLetter('')}
+              >
+                ✕
+              </button>
+            </div>
+            <textarea
+              style={styles.modalTextarea}
+              value={coverLetter}
+              readOnly
+            />
+            <button
+              style={styles.copyButton}
+              onClick={() => navigator.clipboard.writeText(coverLetter)}
+            >
+              Copy to Clipboard
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
+
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -239,8 +287,10 @@ const styles: Record<string, React.CSSProperties> = {
   jobActions: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     gap: '8px',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
   },
   statusBadge: {
     color: 'white',
@@ -286,6 +336,15 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     cursor: 'pointer',
   },
+  generateButton: {
+  padding: '6px 14px',
+  borderRadius: '6px',
+  border: '1px solid #22c55e',
+  backgroundColor: 'white',
+  color: '#22c55e',
+  fontSize: '12px',
+  cursor: 'pointer',
+  },
   error: {
     color: '#ef4444',
     fontSize: '13px',
@@ -300,6 +359,66 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
+  },
+  overlay: {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 1000,
+  },
+  modal: {
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    padding: '32px',
+    width: '90%',
+    maxWidth: '600px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    margin: 0,
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: '#1a1a2e',
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    fontSize: '18px',
+    cursor: 'pointer',
+    color: '#666',
+  },
+  modalTextarea: {
+    width: '100%',
+    height: '300px',
+    padding: '12px',
+    borderRadius: '8px',
+    border: '1px solid #ddd',
+    fontSize: '14px',
+    resize: 'vertical',
+    fontFamily: 'sans-serif',
+  },
+  copyButton: {
+    padding: '12px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#4f46e5',
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
   },
 };
 
