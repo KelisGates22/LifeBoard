@@ -41,7 +41,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // Connect to PostgreSQL using the connection string from appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration["DATABASE_URL"]));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Set up JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -88,6 +88,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowFrontend");
 app.MapControllers();
+
+var connString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Connection string: {(connString == null ? "NULL" : connString == "" ? "EMPTY" : "HAS VALUE length=" + connString.Length)}");
 
 
 using (var scope = app.Services.CreateScope())
