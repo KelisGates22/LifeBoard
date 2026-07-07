@@ -41,7 +41,7 @@ builder.Services.AddSwaggerGen(options =>
 
 // Connect to PostgreSQL using the connection string from appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration["DATABASE_URL"]));
 
 // Set up JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
