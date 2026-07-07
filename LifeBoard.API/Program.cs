@@ -89,10 +89,6 @@ app.UseAuthorization();
 app.UseCors("AllowFrontend");
 app.MapControllers();
 
-var connString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"Connection string: {(connString == null ? "NULL" : connString == "" ? "EMPTY" : "HAS VALUE length=" + connString.Length)}");
-
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
