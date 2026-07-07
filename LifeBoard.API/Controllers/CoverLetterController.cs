@@ -50,22 +50,36 @@ namespace LifeBoard.API.Controllers
 
             var client = new ChatClient(model, apiKey);
 
+            var today = DateTime.UtcNow.ToString("MMMM dd, yyyy");
+
             var prompt = $@"
-Write a professional, concise cover letter for the following job application.
+            Write a professional, concise cover letter for the following job application.
 
-Company: {job.Company}
-Role: {job.Role}
+            Company: {job.Company}
+            Role: {job.Role}
 
-Candidate background:
-- Computer Science graduate (May 2026) from University of West Georgia
-- Full-stack development experience with ASP.NET Core, PostgreSQL, React, and TypeScript
-- Built and deployed LifeBoard, a full stack job application tracker, on Railway
-- Computing Teaching Assistant, debugging student code and teaching OOP concepts
-- Undergraduate Research Assistant, presented SDR research at NCUR 2026
-- CompTIA Network+ certified
+            Candidate information:
+            Name: Kelis Gates
+            Email: kelisgates0425@gmail.com
+            Phone: 470-925-9883
+            Location: Newnan, GA
+            Date: {today}
 
-Keep the tone professional but personable. Keep it under 300 words. Do not use placeholder brackets — write it as a finished, ready to send letter.
-";
+            Candidate background:
+            - Computer Science graduate (May 2026) from University of West Georgia
+            - Full-stack development experience with ASP.NET Core, PostgreSQL, React, and TypeScript
+            - Built and deployed LifeBoard, a full stack job application tracker, on Railway
+            - Computing Teaching Assistant, debugging student code and teaching OOP concepts
+            - Undergraduate Research Assistant, presented SDR research at NCUR 2026
+            - CompTIA Network+ certified
+
+            Important instructions:
+            - Do NOT use any placeholder brackets like [Your Name] or [Date]
+            - Use the candidate's real name and contact info provided above
+            - Write it as a finished, ready to send letter
+            - Keep the tone professional but personable
+            - Keep it under 300 words
+            ";
 
             var completion = await client.CompleteChatAsync(prompt);
             var coverLetter = completion.Value.Content[0].Text;
