@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type { JobApplication, LoginRequest, RegisterRequest, AuthResponse } from '../types';
 
-const BASE_URL = 'https://backend-production-5926.up.railway.app/api';
+//const BASE_URL = 'https://backend-production-5926.up.railway.app/api';
+const BASE_URL = 'http://localhost:5237/api';
 
 
 const api = axios.create({
@@ -39,3 +40,6 @@ export const updateJob = (id: number, data: Partial<JobApplication>) =>
 
 export const deleteJob = (id: number) =>
   api.delete(`/jobapplications/${id}`);
+
+export const generateCoverLetter = (jobId: number) =>
+  api.post<{ coverLetter: string }>(`/coverletter/generate/${jobId}`, {});
